@@ -1,3 +1,5 @@
 *.iml
 venv/
 .idea/
+__pycache__/
+secretkeeper.egg-info/
