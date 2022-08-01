@@ -18,8 +18,10 @@ def cli():
 #@click.option('--keyfile', '-kf', help='Text file containing the key for fact encryption')
 def store(name, fact, key, tag):
     dto = ctrls.SecretDto(name, fact, key, tag)
-    result = ctrls.store(dto)
-    click.echo('Secret stored with given name ' + result.name)
+    secret, key = ctrls.store(dto)
+    click.echo('Secret stored with given name ' + secret.name)
+    click.echo('Encrypted with key: ' + key)
+    click.echo('Store key and name to decrypt the given secret.')
     if tag:
         click.echo('Given Tags: ' + ', '.join(tag))
 
@@ -32,9 +34,12 @@ def load(name, key):
 
 @click.command(help='Decrypt and show a secret')
 def list():
-    secretFileNames = ctrls.listSecrets()
-    print(secretFileNames)
-
+    secretFiles= ctrls.listSecrets()
+    if(len(secretFiles) > 0):
+        for file in secretFiles:
+            click.echo(file.getSecretName())
+    else:
+        click.echo('No json-secret-files (jsons) found in given directory')
 @click.command(help='Find Secrets by given name or tags')
 def find(name, tag):
     pass
