@@ -29,8 +29,9 @@ def store(name, fact, key, tag):
 @click.option('--name', '-n', required=True, help='Name of secret ist used for file naming')
 @click.option('--key', '-k', help='Key for fact encryption')
 def load(name, key):
-    result = ctrls.readSecret(name, key)
-    print('Secret File Content: ' + result.name)
+    secret = ctrls.readSecret(name, key)
+    click.echo('Secret Name: ' + secret.name)
+    click.echo('Secret Fact: ' + secret.fact)
 
 @click.command(help='Decrypt and show a secret')
 def list():

@@ -9,8 +9,13 @@ def store(secretDto):
     return secret, key
 
 def readSecret(name, key):
-    file = open(name + '.jsons', 'rt')
-    return file.read();
+    secretStorage = strge.SecretFileStorage(scrt.JsonsEncryptor(scrt.FactEncryptionAlgorithm(), scrt.FactSignatureAlgorithm()))
+    secretFile = secretStorage.load(name)
+
+    decryptor = scrt.JsonsDecryptor(scrt.FactDecryptionAlgorithm())
+    secret = decryptor.toSecret(secretFile.read(), key)
+
+    return secret
 
 def listSecrets():
     return strge.SecretFileStorage(scrt.JsonsEncryptor(scrt.FactEncryptionAlgorithm(), scrt.FactSignatureAlgorithm()), '.').list()
