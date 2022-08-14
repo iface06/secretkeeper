@@ -1,0 +1,44 @@
+@startuml
+package Secret {
+    class Secret {
+        name : string
+        fact : string
+        createdDate : date
+        id: string
+    }
+
+    class Groupe {
+        name : string
+    }
+
+    class FactDecryptionAlgorithm
+
+    class FactSignatureAlgorithm
+    class FactEncryptionAlgorithm
+
+
+
+    Secret "*" -- "1" Groupe
+}
+
+package Jsons {
+    class JsonsEncryptor
+    class JsonsDecryptor
+}
+
+JsonsEncryptor *-- FactEncryptionAlgorithm
+JsonsEncryptor *-- FactSignatureAlgorithm
+
+JsonsDecryptor *-- FactDecryptionAlgorithm
+JsonsDecryptor *-- FactSignatureAlgorithm
+
+package SecretFileStorage {
+    class SecretFileStorage
+
+    Secret -- SecretMetaFile
+    Secret -- SecretFactFile
+}
+
+
+'comment
+@enduml

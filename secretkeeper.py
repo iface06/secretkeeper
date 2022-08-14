@@ -28,10 +28,15 @@ def store(name, fact, key, tag):
 @click.command(help='Decrypt and show a secret')
 @click.option('--name', '-n', required=True, help='Name of secret ist used for file naming')
 @click.option('--key', '-k', help='Key for fact encryption')
-def load(name, key):
+@click.option('--factonly', '-fo', help='show only the decrypted fact on cli', default=False, is_flag=True)
+def load(name, key, factonly):
     secret = ctrls.readSecret(name, key)
-    click.echo('Secret Name: ' + secret.name)
-    click.echo('Secret Fact: ' + secret.fact)
+    if(factonly):
+        click.echo( secret.fact)
+    else:
+        click.echo('Secret Name: ' + secret.name)
+        click.echo('Secret Fact: ' + secret.fact)
+        click.echo('Secret Tags: ' + str(secret.tags))
 
 @click.command(help='Decrypt and show a secret')
 def list():
@@ -41,9 +46,13 @@ def list():
             click.echo(file.getSecretName())
     else:
         click.echo('No json-secret-files (jsons) found in given directory')
-@click.command(help='Find Secrets by given name or tags')
-def find(name, tag):
-    pass
+
+@click.command(help='Find Secrets by tags')
+@click.option('--tag', '-t', required=True, multiple=True, help='Name of secret ist used for file naming')
+def find(tag):
+    secretFiles = ctrls.findSecretByTags(tag)
+    for secretFile in secretFiles:
+        click.echo(secretFile.getSecretName())
 
 cli.add_command(store)
 cli.add_command(load)

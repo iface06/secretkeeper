@@ -20,16 +20,12 @@ def readSecret(name, key):
 def listSecrets():
     return strge.SecretFileStorage(scrt.JsonsEncryptor(scrt.FactEncryptionAlgorithm(), scrt.FactSignatureAlgorithm()), '.').list()
 
+def findSecretByTags(tags):
+    return strge.SecretFileStorage(scrt.JsonsEncryptor(scrt.FactEncryptionAlgorithm(), scrt.FactSignatureAlgorithm()), '.').find(tags)
+
 class SecretDto:
     def __init__(self, name, fact, key, tags):
         self.name = name
         self.fact = fact
         self.key = key
         self.tags = tags
-
-class SecretDaoFactory:
-    def __init__(self, dao):
-        self.dao = dao
-
-    def getDao(self):
-        return self.dao
