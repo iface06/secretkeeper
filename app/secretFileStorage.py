@@ -9,10 +9,11 @@ class SecretFileStorage:
         self.jsonsEncryptor = jsonsEncryptor
         self.basePath = basePath
 
-
+    #ToDo MoveJsonEncryptor to Controllers.store
+    #ToDo open() with basePath
+    #ToDo One Secret File vs. Secret and Fact-File (large Facts)
     def store(self, secret, key):
-        print(self.createSecretFileName(secret))
-        self.file = open(self.createSecretFileName(secret), 'wt')
+        self.file = open(self.createSecretFileNameWithBasePath(secret), 'wt')
         json, key = self.jsonsEncryptor.toJsons(secret, key)
         self.file.write(json)
         self.file.close()
@@ -21,11 +22,15 @@ class SecretFileStorage:
     def createSecretFileName(self, secret):
         return secret.name + '_' + str(secret.id) +'.jsons'
 
+    def createSecretFileNameWithBasePath(self, secret):
+        filename = self.createSecretFileName(secret)
+        return os.path.join(self.basePath, filename)
+
     def load(self, name):
         secretFiles = self.listSecretFilesSortedByModifiedDate(name)
         if(len(secretFiles) <= 0):
             raise SecretFileNotFound()
-        return secretFiles[0]
+        return self.readJsonsFromFile(secretFiles[0].filename)
 
     def listSecretFilesSortedByModifiedDate(self, name):
         secretFiles = []

@@ -44,13 +44,14 @@ class FactEncryptionAlgorithm:
         self.stringLengthOfBase64CodedByteKey = 172 #String Length (base64/utf-8) 256, 344
 
     def encrypt(self, fact, base64BasedKey):
+        encryptedFact = ''
         if base64BasedKey:
             byteKey = b64decode(base64BasedKey)
             cipher = AES.new(byteKey, AES.MODE_EAX)
             ciphertext, tag = cipher.encrypt_and_digest(str.encode(fact))
-            return EncryptedFact(cipher.nonce, ciphertext, tag).toJson()
-        else:
-            return 'ups...'
+            encryptedFact = EncryptedFact(cipher.nonce, ciphertext, tag).toJson()
+        return encryptedFact
+
     def generateKey(self):
         byteKey = get_random_bytes(self.bytesForKey)
         return b64encode(byteKey).decode('utf-8')
@@ -83,7 +84,10 @@ class JsonsDecryptor:
         self.factDecryptionAlgorithm = factDecryptionAlgorithm
 
     def toSecret(self, jsons, key):
-        jsonObj = json.loads(jsons)
+        jsonObj = jsons
+        if isinstance(jsons, str):
+            jsonObj = json.loads(jsons)
+
         encryptedFact = self.encryptedFactFromJson(jsonObj['fact'])
         fact = self.factDecryptionAlgorithm.decryption(encryptedFact, key)
         return Secret(jsonObj['header']['name'], fact, jsonObj['header']['tags'])
@@ -112,6 +116,3 @@ class FactSignatureAlgorithm:
 
     def sign(self, fact, key):
         return hash(fact + key)
-
-
-

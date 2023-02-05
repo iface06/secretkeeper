@@ -2,5 +2,8 @@
 venv/
 .idea/
 __pycache__/
+documentation/
 secretkeeper.egg-info/
 *.jsons
+dist/
+.coverage

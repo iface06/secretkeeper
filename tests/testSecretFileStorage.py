@@ -24,7 +24,7 @@ class TestSecretFileStorage(unittest.TestCase):
 
     def testFindSecretFileByName(self):
         jsonsFile = SecretFileStorageMock().load('testfile')
-        self.assertEqual('testfile_uuid41.jsons', jsonsFile.filename)
+        self.assertEqual('testfile', jsonsFile['header']['name'])
 
     def testDoNotFindSecreteFileByName(self):
         load = lambda: SecretFileStorageMock().load('notafile')

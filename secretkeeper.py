@@ -1,7 +1,7 @@
 import app.controllers as ctrls
 import click
 
-@click.group(help='''Secretkeeper helps you managing your secrets like credentials a. 
+@click.group(help='''Secretkeeper helps you managing your secrets like credentials 
                   The CLI provide all commands to manage your secrets.
                   
                   More information see: http://github.com/...
@@ -14,10 +14,9 @@ def cli():
 @click.option('--fact', '-f', required=True, help="Fact is stored encrypted to file")
 @click.option('--key', '-k', help='Key for fact encryption')
 @click.option('--tag', '-t', multiple=True, help="Tags stored to header of secret file")
-#@click.option('--factfile', '-ff', help='Text file containing the fact')
-#@click.option('--keyfile', '-kf', help='Text file containing the key for fact encryption')
-def store(name, fact, key, tag):
-    dto = ctrls.SecretDto(name, fact, key, tag)
+@click.option('--basepath', '-bp', help='directory with secret files formatted in jsons', default='.')
+def store(name, fact, key, tag, basepath):
+    dto = ctrls.SecretDto(name, fact, key, tag, basepath)
     secret, key = ctrls.store(dto)
     click.echo('Secret stored with given name ' + secret.name)
     click.echo('Encrypted with key: ' + key)
@@ -29,8 +28,9 @@ def store(name, fact, key, tag):
 @click.option('--name', '-n', required=True, help='Name of secret ist used for file naming')
 @click.option('--key', '-k', help='Key for fact encryption')
 @click.option('--factonly', '-fo', help='show only the decrypted fact on cli', default=False, is_flag=True)
-def load(name, key, factonly):
-    secret = ctrls.readSecret(name, key)
+@click.option('--basepath', '-bp', help='directory with secret files formatted in jsons', default='.')
+def load(name, key, factonly, basepath):
+    secret = ctrls.readSecret(name, key, basepath)
     if(factonly):
         click.echo( secret.fact)
     else:
@@ -39,8 +39,9 @@ def load(name, key, factonly):
         click.echo('Secret Tags: ' + str(secret.tags))
 
 @click.command(help='Decrypt and show a secret')
-def list():
-    secretFiles= ctrls.listSecrets()
+@click.option('--basepath', '-bp', help='directory with secret files formatted in jsons', default='.')
+def list(basepath):
+    secretFiles= ctrls.listSecrets(basepath)
     if(len(secretFiles) > 0):
         for file in secretFiles:
             click.echo(file.getSecretName())
@@ -49,8 +50,9 @@ def list():
 
 @click.command(help='Find Secrets by tags')
 @click.option('--tag', '-t', required=True, multiple=True, help='Name of secret ist used for file naming')
-def find(tag):
-    secretFiles = ctrls.findSecretByTags(tag)
+@click.option('--basepath', '-bp', help='directory with secret files formatted in jsons', default='.')
+def find(tag, basepath):
+    secretFiles = ctrls.findSecretByTags(tag, basepath)
     for secretFile in secretFiles:
         click.echo(secretFile.getSecretName())
 

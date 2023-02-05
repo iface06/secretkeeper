@@ -11,4 +11,7 @@ class FileSystemStaff(unittest.TestCase):
         print('Modified: ' + str(modifiedTimestamp))
         print('Modified: ' + modifiedDate.strftime('%d-%m-%Y %H:%M:%S'))
 
+    def testSecretFilePath(self):
+        print(os.path.join('opt', 'volume', 'testfile.json'))
+
 
